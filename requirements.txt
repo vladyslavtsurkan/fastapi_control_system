@@ -1,0 +1,12 @@
+fastapi[all]==0.108.0
+fastapi-pagination==0.12.14
+pydantic==2.5.3
+pydantic-settings==2.1.0
+SQLAlchemy==2.0.25
+alembic==1.13.1
+asyncpg==0.29.0
+fastapi-users[sqlalchemy]==12.1.2
+pymodbus==3.6.2
+pytest==7.4.4
+pytest-asyncio==0.23.3
+setuptools==69.0.3
