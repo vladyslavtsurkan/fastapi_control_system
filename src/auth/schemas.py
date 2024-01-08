@@ -1,6 +1,7 @@
 from typing import Optional
 
 from fastapi_users import schemas
+from pydantic import BaseModel
 
 
 class UserRead(schemas.BaseUser[int]):
@@ -17,12 +18,8 @@ class UserRead(schemas.BaseUser[int]):
         from_attributes = True
 
 
-class UserCreate(schemas.BaseUserCreate):
+class UserCreate(BaseModel):
     email: str
     first_name: Optional[str]
     last_name: Optional[str]
     password: str
-    role_id: int
-    is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
-    is_verified: Optional[bool] = False

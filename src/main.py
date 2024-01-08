@@ -30,6 +30,12 @@ router.include_router(
     tags=["auth"],
 )
 
+router.include_router(
+    fastapi_users.get_users_router(UserRead, UserCreate),
+    prefix="/users",
+    tags=["users"],
+)
+
 router.include_router(controllers_router, prefix="/controllers", tags=["controllers"])
 
 app.include_router(router)
