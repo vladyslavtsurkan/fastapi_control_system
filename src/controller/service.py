@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from pymodbus.client.tcp import AsyncModbusTcpClient
 from pymodbus.exceptions import ConnectionException
 
-from auth.models import User
 from controller.models import Controller
 from controller.schemas import ControllerCreateUpdate
 from controller.exceptions import (

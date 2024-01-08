@@ -21,5 +21,6 @@ class ControllerUpdatePartial(BaseModel):
 
 class ControllerRead(ControllerCreateUpdate):
     id: int = Field(..., example=1)
+    user_id: int = Field(..., example=1)
     created_at: datetime = Field(..., example="2021-06-01 00:00:00")
     updated_at: datetime = Field(..., example="2021-06-01 00:00:00")
