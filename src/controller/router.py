@@ -55,7 +55,8 @@ async def create_controller(
         service: ControllerServiceDepends,
         user: CurrentActiveUserDepends,
 ):
-    controller = await service.create_controller(user.id, controller)
+    controller_dict = controller.model_dump()
+    controller = await service.create_controller(user.id, controller_dict)
 
     return controller
 
@@ -67,7 +68,8 @@ async def update_controller(
         service: ControllerServiceDepends,
         user: CurrentActiveUserDepends,
 ):
-    controller = await service.update_controller(user.id, controller_id, controller)
+    controller_dict = controller.model_dump()
+    controller = await service.update_controller(user.id, controller_id, controller_dict)
     return controller
 
 
@@ -78,7 +80,8 @@ async def update_controller_partial(
         service: ControllerServiceDepends,
         user: CurrentActiveUserDepends,
 ):
-    controller = await service.update_controller(user.id, controller_id, controller)
+    controller_dict = controller.model_dump(exclude_none=True, exclude_unset=True)
+    controller = await service.update_controller(user.id, controller_id, controller_dict)
     return controller
 
 

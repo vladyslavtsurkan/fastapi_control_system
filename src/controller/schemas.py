@@ -12,11 +12,11 @@ class ControllerCreateUpdate(BaseModel):
 
 
 class ControllerUpdatePartial(BaseModel):
-    name: str | None = Field(..., example="Controller 1")
-    description: str | None = Field(..., example="Description 1")
-    ip_address: IPvAnyAddress | None = Field(..., example="127.0.0.1")
-    port: int | None = Field(..., example=502)
-    is_active: bool | None = Field(..., example=True)
+    name: str | None = None
+    description: str | None = None
+    ip_address: IPvAnyAddress | None = None
+    port: int | None = None
+    is_active: bool | None = None
 
 
 class ControllerRead(ControllerCreateUpdate):

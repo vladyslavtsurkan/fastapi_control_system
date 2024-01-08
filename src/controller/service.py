@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 from fastapi import Depends
 from sqlalchemy import select, update
@@ -7,7 +8,6 @@ from pymodbus.client.tcp import AsyncModbusTcpClient
 from pymodbus.exceptions import ConnectionException
 
 from controller.models import Controller
-from controller.schemas import ControllerCreateUpdate
 from controller.exceptions import (
     PermissionForControllerDenied,
     ControllerNotFound,
@@ -93,8 +93,8 @@ class ControllerService:
 
         return controllers
 
-    async def create_controller(self, user_id: int, controller: ControllerCreateUpdate):
-        controller = Controller(**controller.model_dump())
+    async def create_controller(self, user_id: int, controller_dict: dict[str, Any]):
+        controller = Controller(**controller_dict)
         controller.created_at = controller.updated_at = datetime.now()
         controller.user_id = user_id
         self.session.add(controller)
@@ -108,7 +108,7 @@ class ControllerService:
             self,
             user_id: int,
             controller_id: int,
-            controller_schema: ControllerCreateUpdate
+            controller_dict: dict[str, Any]
     ):
         stmt = select(Controller).where(Controller.id == controller_id)
         result = await self.session.execute(stmt)
@@ -121,7 +121,7 @@ class ControllerService:
             raise PermissionForControllerDenied
 
         stmt = update(Controller).where(Controller.id == controller_id).values(
-            **controller_schema.model_dump()
+            **controller_dict
         )
         await self.session.execute(stmt)
 
