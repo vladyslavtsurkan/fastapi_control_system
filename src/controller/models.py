@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, DateTime, Boolean
+from sqlalchemy import Integer, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy.dialects.postgresql import INET
 
@@ -16,3 +16,4 @@ class Controller(CustomBase):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[str] = mapped_column(DateTime, nullable=False)
     updated_at: Mapped[str] = mapped_column(DateTime, nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
