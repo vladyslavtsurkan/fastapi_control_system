@@ -25,19 +25,38 @@ class ControllerService:
 
         return controller
 
-    async def read_controller_data(self, controller_id: int):
+    async def read_controller_data(self, controller_id: int, data_address: int = 0, data_length: int = 1):
         controller = await self.get_controller_by_id(controller_id)
 
         if controller is None:
             return None
 
         client = AsyncModbusTcpClient(
-            host=controller["ip_address"],
+            host=str(controller["ip_address"]),
             port=controller["port"]
         )
         try:
             await client.connect()
-            result = await client.read_holding_registers(0, 1)
+            result = await client.read_holding_registers(data_address, data_length)
+        except ConnectionException:
+            return None
+        finally:
+            client.close()
+        return result.registers
+
+    async def write_controller_data(self, controller_id: int, data_address: int = 0, data: int = 0):
+        controller = await self.get_controller_by_id(controller_id)
+
+        if controller is None:
+            return None
+
+        client = AsyncModbusTcpClient(
+            host=str(controller["ip_address"]),
+            port=controller["port"]
+        )
+        try:
+            await client.connect()
+            result = await client.write_register(data_address, data)
         except ConnectionException:
             return None
         finally:

@@ -27,6 +27,34 @@ async def get_controller_by_id(controller_id: int, service: ControllerServiceDep
     return controller
 
 
+@router.get("/{controller_id}/data", status_code=status.HTTP_200_OK)
+async def read_controller_data(
+        controller_id: int, service: ControllerServiceDepends,
+        address: int = 0,
+        length: int = 1
+):
+    data = await service.read_controller_data(controller_id, address, length)
+
+    if data is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Controller not found")
+
+    return {"data": data}
+
+
+@router.post("/{controller_id}/data", status_code=status.HTTP_200_OK)
+async def write_controller_data(
+        controller_id: int, service: ControllerServiceDepends,
+        address: int = 0,
+        data: int = 0
+):
+    data = await service.write_controller_data(controller_id, address, data)
+
+    if data is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Controller not found")
+
+    return {"data": data}
+
+
 @router.post("/", response_model=ControllerRead, status_code=status.HTTP_201_CREATED)
 async def create_controller(controller: ControllerCreateUpdate, service: ControllerServiceDepends):
     controller = await service.create_controller(controller)

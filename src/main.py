@@ -5,8 +5,8 @@ from auth.schemas import UserRead, UserCreate
 from controller.router import router as controllers_router
 
 app = FastAPI(
-    title="Dryer control system API",
-    description="API for controlling the dryer",
+    title="Control system API",
+    description="API for controlling the object",
     version="0.1.0",
 )
 
