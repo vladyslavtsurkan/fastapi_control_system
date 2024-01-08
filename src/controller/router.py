@@ -35,10 +35,7 @@ async def read_controller_data(
     return {"data": data}
 
 
-@router.post(
-    "/{controller_id}/data",
-    status_code=status.HTTP_200_OK,
-)
+@router.post("/{controller_id}/data", status_code=status.HTTP_200_OK)
 async def write_controller_data(
         controller_id: int, service: ControllerServiceDepends,
         user: CurrentActiveUserDepends,
@@ -51,11 +48,11 @@ async def write_controller_data(
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_controller(
-        controller: ControllerCreateUpdate,
+        controller_schema: ControllerCreateUpdate,
         service: ControllerServiceDepends,
         user: CurrentActiveUserDepends,
 ) -> ControllerRead:
-    controller_dict = controller.model_dump()
+    controller_dict = controller_schema.model_dump()
     controller = await service.create_controller(user.id, controller_dict)
 
     return controller
@@ -64,11 +61,11 @@ async def create_controller(
 @router.put("/{controller_id}", status_code=status.HTTP_200_OK)
 async def update_controller(
         controller_id: int,
-        controller: ControllerCreateUpdate,
+        controller_schema: ControllerCreateUpdate,
         service: ControllerServiceDepends,
         user: CurrentActiveUserDepends,
 ) -> ControllerRead:
-    controller_dict = controller.model_dump()
+    controller_dict = controller_schema.model_dump()
     controller = await service.update_controller(user.id, controller_id, controller_dict)
     return controller
 
@@ -76,11 +73,11 @@ async def update_controller(
 @router.patch("/{controller_id}", status_code=status.HTTP_200_OK)
 async def update_controller_partial(
         controller_id: int,
-        controller: ControllerUpdatePartial,
+        controller_schema: ControllerUpdatePartial,
         service: ControllerServiceDepends,
         user: CurrentActiveUserDepends,
 ) -> ControllerRead:
-    controller_dict = controller.model_dump(exclude_unset=True)
+    controller_dict = controller_schema.model_dump(exclude_unset=True)
     controller = await service.update_controller(user.id, controller_id, controller_dict)
     return controller
 
