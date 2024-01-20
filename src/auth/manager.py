@@ -18,6 +18,16 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         print(f"User {user.id} has registered.")
 
+    async def on_after_request_verify(
+        self, user: models.UP, token: str, request: Optional[Request] = None
+    ) -> None:
+        print(f"Verification requested for user {user.id} with token {token}")
+
+    async def on_after_verify(
+        self, user: models.UP, request: Optional[Request] = None
+    ) -> None:
+        print(f"User {user.id} has verified their email.")
+
     async def create(
         self,
         user_create: schemas.UC,

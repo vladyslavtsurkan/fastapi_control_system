@@ -29,6 +29,15 @@ class ControllerService:
 
         return controller.to_dict()
 
+    async def get_user_controllers(self, user_id: int):
+        stmt = select(Controller).where(Controller.user_id == user_id)
+        result = await self.session.execute(stmt)
+        controllers = result.scalars().all()
+
+        controllers = [controller.to_dict() for controller in controllers]
+
+        return controllers
+
     async def read_controller_data(
             self,
             user_id: int,

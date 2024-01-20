@@ -18,7 +18,7 @@ class UserRead(schemas.BaseUser[int]):
         from_attributes = True
 
 
-class UserCreate(BaseModel):
+class UserCreate(schemas.CreateUpdateDictModel):
     email: str
     first_name: Optional[str]
     last_name: Optional[str]

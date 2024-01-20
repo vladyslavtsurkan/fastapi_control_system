@@ -1,6 +1,7 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 
 from auth.dependencies import CurrentActiveUserDepends
+from auth.base_config import current_superuser
 from controller.dependencies import ControllerServiceDepends
 from controller.schemas import (
     ControllerCreateUpdate,
@@ -11,9 +12,21 @@ from controller.schemas import (
 router = APIRouter()
 
 
-@router.get("/", status_code=status.HTTP_200_OK)
-async def get_all_controllers(service: ControllerServiceDepends) -> list[ControllerRead]:
+@router.get("/", status_code=status.HTTP_200_OK, dependencies=[Depends(current_superuser)])
+async def get_all_controllers(
+        service: ControllerServiceDepends,
+) -> list[ControllerRead]:
     controllers = await service.get_all_controllers()
+
+    return controllers
+
+
+@router.get("/me", status_code=status.HTTP_200_OK)
+async def get_my_controllers(
+        service: ControllerServiceDepends,
+        user: CurrentActiveUserDepends
+) -> list[ControllerRead]:
+    controllers = await service.get_user_controllers(user.id)
 
     return controllers
 
