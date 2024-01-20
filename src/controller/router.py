@@ -7,6 +7,7 @@ from controller.schemas import (
     ControllerCreateUpdate,
     ControllerRead,
     ControllerUpdatePartial,
+    ControllerSetDataValue
 )
 
 router = APIRouter()
@@ -39,7 +40,8 @@ async def get_controller_by_id(controller_id: int, service: ControllerServiceDep
 
 @router.get("/{controller_id}/data", status_code=status.HTTP_200_OK)
 async def read_controller_data(
-        controller_id: int, service: ControllerServiceDepends,
+        controller_id: int,
+        service: ControllerServiceDepends,
         user: CurrentActiveUserDepends,
         address: int = 0,
         length: int = 1
@@ -50,12 +52,13 @@ async def read_controller_data(
 
 @router.post("/{controller_id}/data", status_code=status.HTTP_200_OK)
 async def write_controller_data(
-        controller_id: int, service: ControllerServiceDepends,
+        controller_id: int,
+        data: ControllerSetDataValue,
+        service: ControllerServiceDepends,
         user: CurrentActiveUserDepends,
-        address: int = 0,
-        data: int = 0
+        address: int = 0
 ):
-    data = await service.write_controller_data(user.id, controller_id, address, data)
+    data = await service.write_controller_data(user.id, controller_id, address, data.data_value)
     return {"data": data}
 
 

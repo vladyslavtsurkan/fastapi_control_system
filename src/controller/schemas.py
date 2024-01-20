@@ -1,9 +1,11 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field, IPvAnyAddress
+from pydantic import Field, IPvAnyAddress
+
+from schemas import CustomBaseModel
 
 
-class ControllerCreateUpdate(BaseModel):
+class ControllerCreateUpdate(CustomBaseModel):
     name: str = Field(..., example="Controller 1")
     description: str | None = Field(..., example="Description 1")
     ip_address: IPvAnyAddress = Field(..., example="127.0.0.1")
@@ -11,7 +13,7 @@ class ControllerCreateUpdate(BaseModel):
     is_active: bool = Field(..., example=True)
 
 
-class ControllerUpdatePartial(BaseModel):
+class ControllerUpdatePartial(CustomBaseModel):
     name: str = None
     description: str | None = None
     ip_address: IPvAnyAddress = None
@@ -24,3 +26,7 @@ class ControllerRead(ControllerCreateUpdate):
     user_id: int = Field(..., example=1)
     created_at: datetime = Field(..., example="2021-06-01 00:00:00")
     updated_at: datetime = Field(..., example="2021-06-01 00:00:00")
+
+
+class ControllerSetDataValue(CustomBaseModel):
+    data_value: int = Field(..., example=1, ge=0, le=65535)
