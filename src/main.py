@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from redis import asyncio as aioredis
+from redis import asyncio as async_redis
 
 from auth.base_config import auth_backend, fastapi_users
 from auth.schemas import UserRead, UserCreate
@@ -55,7 +55,7 @@ app.include_router(router)
 
 @app.on_event("startup")
 async def startup_event():
-    redis = aioredis.from_url(
+    redis = async_redis.from_url(
         f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}",
         encoding="utf8",
         decode_responses=True
