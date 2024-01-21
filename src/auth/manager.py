@@ -6,7 +6,10 @@ from fastapi_users import (BaseUserManager, IntegerIDMixin, exceptions, models,
 
 from auth.models import User
 from auth.utils import get_user_db
-from tasks import send_email_for_verification_user
+from tasks import (
+    send_email_for_verification_user,
+    send_email_for_forgot_password,
+)
 from config import AppSettings
 
 settings = AppSettings()
@@ -29,6 +32,17 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         self, user: models.UP, request: Optional[Request] = None
     ) -> None:
         print(f"User {user.id} has verified their email.")
+
+    async def on_after_forgot_password(
+        self, user: models.UP, token: str, request: Optional[Request] = None
+    ) -> None:
+        print(f"User {user.id} has forgot their password with token {token}")
+        send_email_for_forgot_password.delay(user.email, token)
+
+    async def on_after_reset_password(
+        self, user: models.UP, request: Optional[Request] = None
+    ) -> None:
+        print(f"User {user.id} has reset their password.")
 
     async def create(
         self,
