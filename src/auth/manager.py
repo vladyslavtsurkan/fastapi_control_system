@@ -6,7 +6,7 @@ from fastapi_users import (BaseUserManager, IntegerIDMixin, exceptions, models,
 
 from auth.models import User
 from auth.utils import get_user_db
-from tasks.tasks import send_email_for_verification_user
+from tasks import send_email_for_verification_user
 from config import AppSettings
 
 settings = AppSettings()
