@@ -1,4 +1,5 @@
 from fastapi import APIRouter, status, Depends
+from fastapi_cache.decorator import cache
 
 from auth.dependencies import CurrentActiveUserDepends
 from auth.base_config import current_superuser
@@ -14,6 +15,7 @@ router = APIRouter()
 
 
 @router.get("/", status_code=status.HTTP_200_OK, dependencies=[Depends(current_superuser)])
+@cache(expire=60)
 async def get_all_controllers(
         service: ControllerServiceDepends,
 ) -> list[ControllerRead]:
@@ -23,6 +25,7 @@ async def get_all_controllers(
 
 
 @router.get("/me", status_code=status.HTTP_200_OK)
+@cache(expire=60)
 async def get_my_controllers(
         service: ControllerServiceDepends,
         user: CurrentActiveUserDepends
@@ -33,6 +36,7 @@ async def get_my_controllers(
 
 
 @router.get("/{controller_id}", status_code=status.HTTP_200_OK)
+@cache(expire=30)
 async def get_controller_by_id(controller_id: int, service: ControllerServiceDepends) -> ControllerRead:
     controller = await service.get_controller_by_id(controller_id)
     return controller

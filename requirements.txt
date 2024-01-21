@@ -6,7 +6,9 @@ SQLAlchemy==2.0.25
 alembic==1.13.1
 asyncpg==0.29.0
 fastapi-users[sqlalchemy]==12.1.2
+fastapi-cache2[redis]==0.2.1
 pymodbus==3.6.2
 pytest==7.4.4
 pytest-asyncio==0.23.3
 setuptools==69.0.3
+redis==4.6.0

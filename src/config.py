@@ -14,3 +14,6 @@ class AppSettings(BaseSettings):
     DB_PASS: str
 
     SECRET_AUTH: str
+
+    REDIS_HOST: IPvAnyAddress | str
+    REDIS_PORT: int
