@@ -6,6 +6,7 @@ from fastapi_users import (BaseUserManager, IntegerIDMixin, exceptions, models,
 
 from auth.models import User
 from auth.utils import get_user_db
+from tasks.tasks import send_email_for_verification_user
 from config import AppSettings
 
 settings = AppSettings()
@@ -22,6 +23,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         self, user: models.UP, token: str, request: Optional[Request] = None
     ) -> None:
         print(f"Verification requested for user {user.id} with token {token}")
+        send_email_for_verification_user.delay(user.email, token)
 
     async def on_after_verify(
         self, user: models.UP, request: Optional[Request] = None

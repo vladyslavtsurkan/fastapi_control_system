@@ -17,3 +17,8 @@ class AppSettings(BaseSettings):
 
     REDIS_HOST: IPvAnyAddress | str
     REDIS_PORT: int
+
+    SMTP_HOST: IPvAnyAddress | str
+    SMTP_PORT: int
+    SMTP_USER: str
+    SMTP_PASS: str
