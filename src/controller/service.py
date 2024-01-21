@@ -19,7 +19,7 @@ class ControllerService:
     def __init__(self, session: AsyncSession = Depends(get_async_session)):
         self.session = session
 
-    async def get_controller_by_id(self, controller_id: int):
+    async def _get_controller_instance_model_by_id(self, user_id: int, controller_id: int):
         stmt = select(Controller).where(Controller.id == controller_id)
         result = await self.session.execute(stmt)
         controller = result.scalars().first()
@@ -27,6 +27,13 @@ class ControllerService:
         if controller is None:
             raise ControllerNotFound
 
+        if controller.user_id != user_id:
+            raise PermissionForControllerDenied
+
+        return controller
+
+    async def get_controller_by_id(self, user_id: int, controller_id: int):
+        controller = await self._get_controller_instance_model_by_id(user_id, controller_id)
         return controller.to_dict()
 
     async def get_user_controllers(self, user_id: int):
@@ -45,17 +52,11 @@ class ControllerService:
             data_address: int = 0,
             data_length: int = 1
     ):
-        controller = await self.get_controller_by_id(controller_id)
-
-        if controller is None:
-            raise ControllerNotFound
-
-        if controller["user_id"] != user_id:
-            raise PermissionForControllerDenied
+        controller = await self._get_controller_instance_model_by_id(user_id, controller_id)
 
         client = AsyncModbusTcpClient(
-            host=str(controller["ip_address"]),
-            port=controller["port"]
+            host=str(controller.ip_address),
+            port=controller.port
         )
         try:
             await client.connect()
@@ -73,12 +74,7 @@ class ControllerService:
             data_address: int = 0,
             data: int = 0
     ):
-        controller = await self.get_controller_by_id(controller_id)
-        if controller is None:
-            raise ControllerNotFound
-
-        if controller["user_id"] != user_id:
-            raise PermissionForControllerDenied
+        controller = await self._get_controller_instance_model_by_id(user_id, controller_id)
 
         client = AsyncModbusTcpClient(
             host=str(controller["ip_address"]),
@@ -119,15 +115,7 @@ class ControllerService:
             controller_id: int,
             controller_dict: dict[str, Any]
     ):
-        stmt = select(Controller).where(Controller.id == controller_id)
-        result = await self.session.execute(stmt)
-        controller = result.scalars().first()
-
-        if controller is None:
-            raise ControllerNotFound
-
-        if controller.user_id != user_id:
-            raise PermissionForControllerDenied
+        controller = await self._get_controller_instance_model_by_id(user_id, controller_id)
 
         stmt = update(Controller).where(Controller.id == controller_id).values(
             **controller_dict
@@ -141,15 +129,7 @@ class ControllerService:
         return controller.to_dict()
 
     async def delete_controller(self, user_id: int, controller_id: int):
-        stmt = select(Controller).where(Controller.id == controller_id)
-        result = await self.session.execute(stmt)
-        controller = result.scalars().first()
-
-        if controller is None:
-            raise ControllerNotFound
-
-        if controller.user_id != user_id:
-            raise PermissionForControllerDenied
+        controller = await self._get_controller_instance_model_by_id(user_id, controller_id)
 
         await self.session.delete(controller)
         await self.session.commit()

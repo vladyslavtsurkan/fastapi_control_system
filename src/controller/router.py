@@ -37,8 +37,12 @@ async def get_my_controllers(
 
 @router.get("/{controller_id}", status_code=status.HTTP_200_OK)
 @cache(expire=30)
-async def get_controller_by_id(controller_id: int, service: ControllerServiceDepends) -> ControllerRead:
-    controller = await service.get_controller_by_id(controller_id)
+async def get_controller_by_id(
+        controller_id: int,
+        service: ControllerServiceDepends,
+        user: CurrentActiveUserDepends,
+) -> ControllerRead:
+    controller = await service.get_controller_by_id(user.id, controller_id)
     return controller
 
 
