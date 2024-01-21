@@ -19,7 +19,7 @@ app = FastAPI(
 router = APIRouter(prefix="/api/v1")
 
 router.include_router(
-    fastapi_users.get_auth_router(auth_backend),
+    fastapi_users.get_auth_router(auth_backend, requires_verification=True),
     prefix="/auth",
     tags=["auth"],
 )
