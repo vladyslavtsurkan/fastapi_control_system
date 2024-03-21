@@ -26,7 +26,15 @@ class User(SQLAlchemyBaseUserTable[int], CustomBase):
     last_name: Mapped[str] = mapped_column(String, nullable=True)
     registered_at: Mapped[str] = mapped_column(TIMESTAMP, default=datetime.now)
     role_id: Mapped[int] = mapped_column(Integer, ForeignKey('roles.id'))
-    hashed_password: Mapped[str] = mapped_column(String(length=1024), nullable=False)
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(
+        String(length=1024), nullable=False
+    )
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, default=True, nullable=False
+    )
+    is_superuser: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False
+    )
+    is_verified: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False
+    )

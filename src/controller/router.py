@@ -14,7 +14,11 @@ from controller.schemas import (
 router = APIRouter()
 
 
-@router.get("/", status_code=status.HTTP_200_OK, dependencies=[Depends(current_superuser)])
+@router.get(
+    "/",
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(current_superuser)]
+)
 @cache(expire=60)
 async def get_all_controllers(
         service: ControllerServiceDepends,
@@ -54,7 +58,9 @@ async def read_controller_data(
         address: int = 0,
         length: int = 1
 ):
-    data = await service.read_controller_data(user.id, controller_id, address, length)
+    data = await service.read_controller_data(
+        user.id, controller_id, address, length
+    )
     return {"data": data}
 
 
@@ -66,7 +72,9 @@ async def write_controller_data(
         user: CurrentActiveUserDepends,
         address: int = 0
 ):
-    data = await service.write_controller_data(user.id, controller_id, address, data.data_value)
+    data = await service.write_controller_data(
+        user.id, controller_id, address, data.data_value
+    )
     return {"data": data}
 
 
@@ -90,7 +98,9 @@ async def update_controller(
         user: CurrentActiveUserDepends,
 ) -> ControllerRead:
     controller_dict = controller_schema.model_dump()
-    controller = await service.update_controller(user.id, controller_id, controller_dict)
+    controller = await service.update_controller(
+        user.id, controller_id, controller_dict
+    )
     return controller
 
 
@@ -102,7 +112,9 @@ async def update_controller_partial(
         user: CurrentActiveUserDepends,
 ) -> ControllerRead:
     controller_dict = controller_schema.model_dump(exclude_unset=True)
-    controller = await service.update_controller(user.id, controller_id, controller_dict)
+    controller = await service.update_controller(
+        user.id, controller_id, controller_dict
+    )
     return controller
 
 

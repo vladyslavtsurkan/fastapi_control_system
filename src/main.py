@@ -48,7 +48,9 @@ router.include_router(
     tags=["auth"],
 )
 
-router.include_router(controllers_router, prefix="/controllers", tags=["controllers"])
+router.include_router(
+    controllers_router, prefix="/controllers", tags=["controllers"]
+)
 
 app.include_router(router)
 
