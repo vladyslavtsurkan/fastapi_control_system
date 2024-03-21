@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, APIRouter
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
@@ -10,10 +12,25 @@ from config import AppSettings
 
 settings = AppSettings()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    redis = async_redis.from_url(
+        f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}",
+        encoding="utf8",
+        decode_responses=True
+    )
+    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
+    yield
+    await FastAPICache.clear()
+    await FastAPICache.reset()
+
+
 app = FastAPI(
     title="Control system API",
     description="API for controlling the object",
     version="0.1.0",
+    lifespan=lifespan
 )
 
 router = APIRouter(prefix="/api/v1")
@@ -53,13 +70,3 @@ router.include_router(
 )
 
 app.include_router(router)
-
-
-@app.on_event("startup")
-async def startup_event():
-    redis = async_redis.from_url(
-        f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}",
-        encoding="utf8",
-        decode_responses=True
-    )
-    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
