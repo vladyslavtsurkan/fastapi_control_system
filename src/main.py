@@ -26,47 +26,57 @@ async def lifespan(app: FastAPI):
     await FastAPICache.reset()
 
 
-app = FastAPI(
-    title="Control system API",
-    description="API for controlling the object",
-    version="0.1.0",
-    lifespan=lifespan
-)
+def create_api_router():
+    router = APIRouter(prefix="/api/v1")
 
-router = APIRouter(prefix="/api/v1")
+    router.include_router(
+        fastapi_users.get_auth_router(
+            auth_backend,
+            requires_verification=True
+        ),
+        prefix="/auth",
+        tags=["auth"],
+    )
 
-router.include_router(
-    fastapi_users.get_auth_router(auth_backend, requires_verification=True),
-    prefix="/auth",
-    tags=["auth"],
-)
+    router.include_router(
+        fastapi_users.get_register_router(UserRead, UserCreate),
+        prefix="/auth",
+        tags=["auth"],
+    )
 
-router.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["auth"],
-)
+    router.include_router(
+        fastapi_users.get_reset_password_router(),
+        prefix="/auth",
+        tags=["auth"],
+    )
 
-router.include_router(
-    fastapi_users.get_reset_password_router(),
-    prefix="/auth",
-    tags=["auth"],
-)
+    router.include_router(
+        fastapi_users.get_users_router(UserRead, UserCreate),
+        prefix="/users",
+        tags=["users"],
+    )
 
-router.include_router(
-    fastapi_users.get_users_router(UserRead, UserCreate),
-    prefix="/users",
-    tags=["users"],
-)
+    router.include_router(
+        fastapi_users.get_verify_router(UserRead),
+        prefix="/auth",
+        tags=["auth"],
+    )
 
-router.include_router(
-    fastapi_users.get_verify_router(UserRead),
-    prefix="/auth",
-    tags=["auth"],
-)
+    router.include_router(
+        controllers_router, prefix="/controllers", tags=["controllers"]
+    )
 
-router.include_router(
-    controllers_router, prefix="/controllers", tags=["controllers"]
-)
+    return router
 
-app.include_router(router)
+
+def create_app():
+    app = FastAPI(
+        title="Control system API",
+        description="API for controlling the object",
+        version="0.1.0",
+        lifespan=lifespan
+    )
+
+    app.include_router(create_api_router())
+
+    return app
