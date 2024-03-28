@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "fastapi-control-system"
+version = "0.1.0"
+description = "Project (backend) for control systems"
+authors = ["Vladyslav <vtsurkan2002@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = {version = "^0.110.0", extras = ["all"]}
+fastapi-cache2 = "^0.2.1"
+fastapi-users = {version = "^13.0.0", extras = ["sqlalchemy"]}
+pymodbus = "^3.6.6"
+asyncpg = "^0.29.0"
+celery = "^5.3.6"
+flower = "^2.0.1"
+alembic = "^1.13.1"
+redis = "^5.0.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

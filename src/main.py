@@ -23,7 +23,7 @@ async def lifespan(app: FastAPI):
     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
     yield
     await FastAPICache.clear()
-    await FastAPICache.reset()
+    FastAPICache.reset()
 
 
 def create_api_router():
