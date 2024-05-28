@@ -12,6 +12,8 @@ class ControllerCreateUpdate(CustomBaseModel):
     port: int = Field(..., example=502)
     read_address: int = Field(..., example=0)
     write_address: int = Field(..., example=1)
+    low_limit: int = Field(..., example=0)
+    high_limit: int = Field(..., example=65535)
     is_active: bool = Field(..., example=True)
 
 
@@ -22,6 +24,8 @@ class ControllerUpdatePartial(CustomBaseModel):
     port: int = None
     read_address: int = None
     write_address: int = None
+    low_limit: int = None
+    high_limit: int = None
     is_active: bool = None
 
 

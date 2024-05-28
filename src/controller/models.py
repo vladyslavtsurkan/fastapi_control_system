@@ -19,6 +19,10 @@ class Controller(CustomBase):
     write_address: Mapped[int] = mapped_column(
         Integer, nullable=False, default=1
     )
+    low_limit: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    high_limit: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=65535
+    )
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, nullable=False
     )
