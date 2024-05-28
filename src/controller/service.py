@@ -5,7 +5,7 @@ from fastapi import Depends
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from pymodbus.client.tcp import AsyncModbusTcpClient
-from pymodbus.exceptions import ConnectionException
+from pymodbus.exceptions import ModbusException
 
 from controller.models import Controller
 from controller.exceptions import (
@@ -21,7 +21,7 @@ class ControllerService:
 
     async def _get_controller_instance_model_by_id(
         self, user_id: int, controller_id: int
-    ):
+    ) -> Controller:
         stmt = select(Controller).where(Controller.id == controller_id)
         result = await self.session.execute(stmt)
         controller = result.scalars().first()
@@ -34,13 +34,15 @@ class ControllerService:
 
         return controller
 
-    async def get_controller_by_id(self, user_id: int, controller_id: int):
+    async def get_controller_by_id(
+        self, user_id: int, controller_id: int
+    ) -> dict[str, Any]:
         controller = await self._get_controller_instance_model_by_id(
             user_id, controller_id
         )
         return controller.to_dict()
 
-    async def get_user_controllers(self, user_id: int):
+    async def get_user_controllers(self, user_id: int) -> list[dict[str, Any]]:
         stmt = select(Controller).where(Controller.user_id == user_id)
         result = await self.session.execute(stmt)
         controllers = result.scalars().all()
@@ -53,9 +55,7 @@ class ControllerService:
             self,
             user_id: int,
             controller_id: int,
-            data_address: int = 0,
-            data_length: int = 1
-    ):
+    ) -> list[int] | None:
         controller = await self._get_controller_instance_model_by_id(
             user_id, controller_id
         )
@@ -67,9 +67,9 @@ class ControllerService:
         try:
             await client.connect()
             result = await client.read_holding_registers(
-                data_address, data_length
+                controller.read_address, 1
             )
-        except ConnectionException:
+        except ModbusException:
             return None
         finally:
             client.close()
@@ -79,27 +79,29 @@ class ControllerService:
             self,
             user_id: int,
             controller_id: int,
-            data_address: int = 0,
-            data: int = 0
-    ):
+            data: int
+    ) -> list[int] | None:
         controller = await self._get_controller_instance_model_by_id(
             user_id, controller_id
         )
+        controller_dict = controller.to_dict()
 
         client = AsyncModbusTcpClient(
-            host=str(controller["ip_address"]),
-            port=controller["port"]
+            host=str(controller_dict["ip_address"]),
+            port=controller_dict["port"]
         )
         try:
             await client.connect()
-            result = await client.write_register(data_address, data)
-        except ConnectionException:
+            result = await client.write_register(controller_dict[
+                "write_address"], data
+            )
+        except ModbusException:
             return None
         finally:
             client.close()
         return result.registers
 
-    async def get_all_controllers(self):
+    async def get_all_controllers(self) -> list[dict[str, Any]]:
         stmt = select(Controller)
         result = await self.session.execute(stmt)
         controllers = result.scalars().all()
@@ -110,7 +112,7 @@ class ControllerService:
 
     async def create_controller(
         self, user_id: int, controller_dict: dict[str, Any]
-    ):
+    ) -> dict[str, Any]:
         controller = Controller(**controller_dict)
         controller.created_at = controller.updated_at = datetime.now()
         controller.user_id = user_id
@@ -126,7 +128,7 @@ class ControllerService:
             user_id: int,
             controller_id: int,
             controller_dict: dict[str, Any]
-    ):
+    ) -> dict[str, Any] | None:
         controller = await self._get_controller_instance_model_by_id(
             user_id, controller_id
         )
@@ -142,7 +144,9 @@ class ControllerService:
 
         return controller.to_dict()
 
-    async def delete_controller(self, user_id: int, controller_id: int):
+    async def delete_controller(
+        self, user_id: int, controller_id: int
+    ) -> None:
         controller = await self._get_controller_instance_model_by_id(
             user_id, controller_id
         )

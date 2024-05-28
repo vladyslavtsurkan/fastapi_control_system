@@ -10,6 +10,8 @@ class ControllerCreateUpdate(CustomBaseModel):
     description: str | None = Field(..., example="Description 1")
     ip_address: IPvAnyAddress = Field(..., example="127.0.0.1")
     port: int = Field(..., example=502)
+    read_address: int = Field(..., example=0)
+    write_address: int = Field(..., example=1)
     is_active: bool = Field(..., example=True)
 
 
@@ -18,6 +20,8 @@ class ControllerUpdatePartial(CustomBaseModel):
     description: str | None = None
     ip_address: IPvAnyAddress = None
     port: int = None
+    read_address: int = None
+    write_address: int = None
     is_active: bool = None
 
 

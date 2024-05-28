@@ -13,6 +13,12 @@ class Controller(CustomBase):
     description: Mapped[str] = mapped_column(String, nullable=True)
     ip_address: Mapped[str] = mapped_column(INET, nullable=False)
     port: Mapped[int] = mapped_column(Integer, nullable=False)
+    read_address: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0
+    )
+    write_address: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=1
+    )
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, nullable=False
     )

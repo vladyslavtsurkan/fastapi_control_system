@@ -55,11 +55,9 @@ async def read_controller_data(
         controller_id: int,
         service: ControllerServiceDepends,
         user: CurrentActiveUserDepends,
-        address: int = 0,
-        length: int = 1
 ):
     data = await service.read_controller_data(
-        user.id, controller_id, address, length
+        user.id, controller_id
     )
     return {"data": data}
 
@@ -70,10 +68,9 @@ async def write_controller_data(
         data: ControllerSetDataValue,
         service: ControllerServiceDepends,
         user: CurrentActiveUserDepends,
-        address: int = 0
 ):
     data = await service.write_controller_data(
-        user.id, controller_id, address, data.data_value
+        user.id, controller_id, data.data_value
     )
     return {"data": data}
 
